@@ -1,4 +1,5 @@
-﻿using DigitalGateway.Services.RequestService;
+﻿using DigitalGateway.Services.DTOs;
+using DigitalGateway.Services.RequestService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalGateway.API.Controllers;
@@ -13,8 +14,8 @@ public class RequestController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post()
+    public async Task<IActionResult> Post([FromBody] RequestToSendDto requestToSendDto)
     {
-        return Ok();
+        return ProcessResponse(await _requestService.SendRequestAsync(requestToSendDto));
     }
 }

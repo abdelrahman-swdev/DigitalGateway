@@ -1,7 +1,5 @@
 ﻿using DigitalGateway.Core.Exceptions;
 using System.Text;
-using System.Text.Json;
-using System.Xml.Serialization;
 
 namespace DigitalGateway.Core.Clients;
 
@@ -9,7 +7,7 @@ public abstract class AbstractClient
 {
     protected HttpClient HttpClient { get; set; }
 
-    protected async Task<T> RequestAsync<T>(
+    protected async Task<string> RequestAsync(
         HttpMethod httpMethod,
         string endPoint,
         string content = null,
@@ -32,9 +30,9 @@ public abstract class AbstractClient
             var rawResponse = await HttpClient.SendAsync(request, cancellationToken);
             var responseContent = await rawResponse.Content.ReadAsStringAsync(cancellationToken);
 
-            _ = rawResponse.EnsureSuccessStatusCode();
+            rawResponse.EnsureSuccessStatusCode();
 
-            return ReturnDeserializedResponse<T>(mediaTypeResult, responseContent);
+            return responseContent;
         }
         catch (HttpRequestException ex)
         {
@@ -43,25 +41,6 @@ public abstract class AbstractClient
         finally
         {
             request.Dispose();
-        }
-    }
-
-    private static T ReturnDeserializedResponse<T>(string mediaTypeResult, string responseContent)
-    {
-        switch (mediaTypeResult)
-        {
-            case "application/json":
-                return JsonSerializer.Deserialize<T>(responseContent);
-
-            case "application/xml":
-                XmlSerializer serializer = new XmlSerializer(typeof(T));
-                using (StringReader reader = new StringReader(responseContent))
-                {
-                    return (T)serializer.Deserialize(reader);
-                }
-
-            default:
-                return JsonSerializer.Deserialize<T>(responseContent);
         }
     }
 

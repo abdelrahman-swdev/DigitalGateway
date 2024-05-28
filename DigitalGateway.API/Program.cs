@@ -31,6 +31,10 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+builder.Services
+    .AddHttpClient("default");
+    //.AddHttpMessageHandler<LoggingMessageHandler>();
+
 // Scrutor auto register services and repositories
 builder.Services.Scan(selector => selector
         .FromAssemblies(AssemblyReference.Assembly)
