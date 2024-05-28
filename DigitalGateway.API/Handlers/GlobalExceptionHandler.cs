@@ -1,4 +1,3 @@
-using DigitalGateway.Core.Errors;
 using DigitalGateway.Core.ResponsesTypes;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Net;
